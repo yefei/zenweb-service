@@ -1,15 +1,33 @@
 {
   "name": "@zenweb/service",
   "version": "1.0.0",
-  "description": "Zenweb service module",
+  "description": "Zenweb Service module",
   "main": "index.js",
-  "repository": "https://github.com/yefei/zenweb-service",
-  "author": "YeFei",
-  "license": "MIT",
-  "devDependencies": {
-    "zenweb": "^1.2.1"
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
-    "debug": "^4.3.1"
+  "author": {
+    "name": "YeFei",
+    "email": "316606233@qq.com"
+  },
+  "keywords": [
+    "web",
+    "app",
+    "http",
+    "framework",
+    "koa"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yefei/zenweb-service.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yefei/zenweb-service/issues"
+  },
+  "devDependencies": {
+    "@zenweb/core": "^1.0.0",
+    "eslint": "^7.16.0",
+    "koa": "^2.13.1"
   }
 }

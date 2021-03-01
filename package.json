@@ -1,0 +1,15 @@
+{
+  "name": "@zenweb/service",
+  "version": "1.0.0",
+  "description": "Zenweb service module",
+  "main": "index.js",
+  "repository": "https://github.com/yefei/zenweb-service",
+  "author": "YeFei",
+  "license": "MIT",
+  "devDependencies": {
+    "zenweb": "^1.2.1"
+  },
+  "dependencies": {
+    "debug": "^4.3.1"
+  }
+}

@@ -1,5 +1,9 @@
 import * as Koa from 'koa';
 
+export interface ServiceOptions {
+  paths?: string[];
+}
+
 export declare class Service {
   protected ctx: Koa.Context;
   constructor(ctx: Koa.Context);

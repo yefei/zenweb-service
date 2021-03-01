@@ -26,8 +26,12 @@
     "url": "https://github.com/yefei/zenweb-service/issues"
   },
   "devDependencies": {
-    "@zenweb/core": "^1.0.0",
+    "@zenweb/core": "^1.1.0",
     "eslint": "^7.16.0",
     "koa": "^2.13.1"
+  },
+  "dependencies": {
+    "@feiye/discover": "^1.0.0",
+    "debug": "^4.3.1"
   }
 }

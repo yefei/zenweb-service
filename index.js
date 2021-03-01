@@ -15,6 +15,7 @@ const { findServices } = require('./lib/utils');
 function setup(core, options) {
   options = Object.assign({
     paths: [path.join(process.cwd(), 'app', 'service')],
+    typingGenerate: process.env.NODE_ENV === 'development',
   }, options);
   debug('options: %o', options);
   const register = new ServiceRegister();
@@ -26,6 +27,11 @@ function setup(core, options) {
         const count = findServices(register, path);
         debug('load: %s %o files', path, count);
       });
+      // 生成代码补全提示文件
+      if (options.typingGenerate) {
+        debug('generate service typing');
+        require('./lib/typing').findServicesToTyping(options.paths);
+      }
     });
   }
 }

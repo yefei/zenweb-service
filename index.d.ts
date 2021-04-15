@@ -2,6 +2,7 @@ import * as Koa from 'koa';
 
 export interface ServiceOptions {
   paths?: string[];
+  patterns: string;
   typingGenerate?: boolean;
   typingFile?: string;
 }

@@ -9,6 +9,7 @@ const app = new Core();
 
 app.setup(require('..').setup, {
   paths: [path.join(process.cwd(), 'test', 'service')],
+  patterns: '**/*_service.js',
   typingFile: path.join(process.cwd(), 'test', 'typings', 'service.d.ts'),
 });
 

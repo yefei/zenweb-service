@@ -12,6 +12,7 @@ const { findServices } = require('./lib/utils');
  * @param {string[]} [options.paths]
  * @param {boolean} [options.typingGenerate]
  * @param {string} [options.typingFile]
+ * @param {string} [options.patterns]
  */
 function setup(core, options) {
   options = Object.assign({
@@ -26,13 +27,13 @@ function setup(core, options) {
   if (options.paths && options.paths.length) {
     core.setupAfter(() => {
       options.paths.forEach(path => {
-        const count = findServices(register, path);
+        const count = findServices(register, path, options.patterns);
         debug('load: %s %o files', path, count);
       });
       // 生成代码补全提示文件
       if (options.typingGenerate) {
         debug('generate service typing');
-        require('./lib/typing').findServicesToTyping(options.paths, options.typingFile);
+        require('./lib/typing').findServicesToTyping(options.paths, options.typingFile, options.patterns);
       }
     });
   }

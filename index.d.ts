@@ -1,4 +1,4 @@
-import * as Koa from 'koa';
+import Koa from 'koa';
 
 export interface ServiceOptions {
   paths?: string[];
@@ -33,7 +33,7 @@ export declare interface Services {}
 
 declare module '@zenweb/core' {
   interface Core {
-    service: ServiceRegister;
+    serviceRegister: ServiceRegister;
   }
 }
 

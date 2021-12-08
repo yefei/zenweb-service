@@ -11,4 +11,4 @@ run/
 *.sw*
 *.un~
 .npmrc
-test/typings/
+example/service.d.ts

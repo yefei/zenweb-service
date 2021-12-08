@@ -1,9 +1,8 @@
-'use strict';
-
-const debug = require('./lib/debug');
-const path = require('path');
-const { Service, ServiceRegister } = require('./lib/service');
-const { findServices } = require('./lib/utils');
+import path from 'node:path';
+import { ServiceRegister } from './lib/service.js';
+import { findServices } from './lib/utils.js';
+import { findServicesToTyping } from './lib/typing.js';
+export { Service } from './lib/service.js';
 
 /**
  * 安装 service 服务
@@ -14,32 +13,24 @@ const { findServices } = require('./lib/utils');
  * @param {string} [options.typingFile]
  * @param {string} [options.patterns]
  */
-function setup(core, options) {
+export function setup(core, options) {
   options = Object.assign({
     paths: [path.join(process.cwd(), 'app', 'service')],
     typingGenerate: process.env.NODE_ENV === 'development',
     typingFile: path.resolve(process.cwd(), 'typings', 'service.d.ts'),
   }, options);
-  debug('options: %o', options);
   const register = new ServiceRegister();
-  Object.defineProperty(core, 'service', { value: register });
+  Object.defineProperty(core, 'serviceRegister', { value: register });
   core.defineContextCacheProperty('service', ctx => register.getContextServices(ctx));
   if (options.paths && options.paths.length) {
-    core.setupAfter(() => {
-      options.paths.forEach(path => {
-        const count = findServices(register, path, options.patterns);
-        debug('load: %s %o files', path, count);
-      });
+    core.setupAfter(async () => {
+      for (const p of options.paths) {
+        await findServices(register, p, options.patterns);
+      }
       // 生成代码补全提示文件
       if (options.typingGenerate) {
-        debug('generate service typing');
-        require('./lib/typing').findServicesToTyping(options.paths, options.typingFile, options.patterns);
+        await findServicesToTyping(options.paths, options.typingFile, options.patterns);
       }
     });
   }
 }
-
-module.exports = {
-  Service,
-  setup,
-};

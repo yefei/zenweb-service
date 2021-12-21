@@ -24,18 +24,15 @@ export async function findServicesToTyping(paths: string[], tsFile: string, patt
   for (const directory of paths) {
     headerCode.push(`// directory: ${directory}`);
     for (const fullpath of await globby(patterns || '**/*.{ts,js}', { cwd: directory, absolute: true })) {
-      const cls = require(fullpath.slice(0, -3));
-      if (cls.default) {
-        const filename = fullpath.slice(directory.length + 1);
-        const propertyName = camelize(filename);
-        const className = propertyName[0].toUpperCase() + propertyName.slice(1);
-        let importFilename = path.relative(typingsPath, fullpath.slice(0, -3)).replace(/\\/g, '/');
-        if (!importFilename.startsWith('.')) {
-          importFilename = `./${importFilename}`;
-        }
-        headerCode.push(`import ${className} from '${importFilename}';`);
-        declareCode.push(`    ${propertyName}: ${className};`);
+      const filename = fullpath.slice(directory.length + 1);
+      const propertyName = camelize(filename);
+      const className = propertyName[0].toUpperCase() + propertyName.slice(1);
+      let importFilename = path.relative(typingsPath, fullpath.slice(0, -3)).replace(/\\/g, '/');
+      if (!importFilename.startsWith('.')) {
+        importFilename = `./${importFilename}`;
       }
+      headerCode.push(`import ${className} from '${importFilename}';`);
+      declareCode.push(`    ${propertyName}: ${className};`);
     }
   }
 

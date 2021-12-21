@@ -2,7 +2,6 @@ import * as path from 'path';
 import { Core } from '@zenweb/core';
 import { ServiceRegister } from './service';
 import { findServices } from './utils';
-import { findServicesToTyping } from './typing';
 export { Service } from './service';
 
 export interface ServiceOption {
@@ -15,22 +14,10 @@ export interface ServiceOption {
    * 文件匹配规则，默认: ** /*.{ts,js}
    */
   patterns?: string;
-
-  /**
-   * 是否需要生成 service.d.ts 文件，在开发环境下每次都生成
-   */
-  typingGenerate?: boolean;
-
-  /**
-   * 生成 service.d.ts 文件的路径，默认：./typings/service.d.ts
-   */
-  typingFile?: string;
 }
 
 const defaultOption: ServiceOption = {
   paths: [path.join(process.cwd(), 'app', 'service')],
-  typingGenerate: process.env.NODE_ENV === 'development',
-  typingFile: path.resolve(process.cwd(), 'typings', 'service.d.ts'),
 };
 
 /**
@@ -45,10 +32,6 @@ export function setup(core: Core, option?: ServiceOption) {
     core.setupAfter(async () => {
       for (const p of option.paths) {
         await findServices(register, p, option.patterns);
-      }
-      // 生成代码补全提示文件
-      if (option.typingGenerate) {
-        await findServicesToTyping(option.paths, option.typingFile, option.patterns);
       }
     });
   }

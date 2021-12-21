@@ -7,8 +7,11 @@
   "files": [
     "dist"
   ],
+  "bin": {
+    "zenweb-service": "./dist/bin/zenweb-service.js"
+  },
   "scripts": {
-    "prepublishOnly": "rm -fr dist && tsc",
+    "prepublishOnly": "tsc --build --clean && tsc",
     "dev": "cd example && DEBUG=* NODE_ENV=development ts-node app"
   },
   "author": {

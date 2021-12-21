@@ -1,5 +1,6 @@
-import { globby } from 'globby';
-import debug from './debug.js';
+import * as globby from 'globby';
+import debug from './debug';
+import { ServiceRegister } from './service';
 
 const NAME_TEST = /^[a-z][a-z0-9_-]*$/i;
 const NAME_SPLIT = /[_-][a-z]/ig;
@@ -7,10 +8,10 @@ const NAME_SPLIT = /[_-][a-z]/ig;
 /**
  * 驼峰文件名
  *  aaa/bbb_service.js => aaa_bbbService
- * @param {string} filepath
  */
-export function camelize(filepath) {
-  const properties = filepath.substring(0, filepath.lastIndexOf('.')).split('/');
+export function camelize(filepath: string) {
+  const dotIndex = filepath.lastIndexOf('.');
+  const properties = (dotIndex > 0 ? filepath.substring(0, dotIndex) : filepath).split('/');
   return properties.map(property => {
     if (!NAME_TEST.test(property)) {
       throw new Error(`${property} is not match 'a-z0-9_-' in ${filepath}`);
@@ -23,22 +24,21 @@ export function camelize(filepath) {
 
 /**
  * 查找并注册 service
- * @param {ServiceRegister} register
- * @param {string} directory 需要扫描的目录
- * @param {string} [patterns]
+ * @param directory 需要扫描的目录
+ * @param patterns 扫描匹配规则
  */
-export async function findServices(register, directory, patterns) {
+export async function findServices(register: ServiceRegister, directory: string, patterns?: string) {
   let count = 0;
-  for (const file of await globby(patterns || '**/*.js', { cwd: directory, absolute: true })) {
-    const cls = await import('file://' + file);
+  for (const file of await globby(patterns || '**/*.{ts,js}', { cwd: directory, absolute: true })) {
+    const cls = require(file.slice(0, -3));
     if (cls.default) {
       const filename = file.slice(directory.length + 1);
       const name = camelize(filename);
-      debug('register: file://%s => %s', file, name);
+      debug('register: %s => %s', file, name);
       register.register(cls.default, name);
       count++;
     } else {
-      debug('ignore: file://%s', file)
+      debug('ignore: %s', file)
     }
   }
   return count;

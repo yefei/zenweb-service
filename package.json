@@ -1,20 +1,15 @@
 {
   "name": "@zenweb/service",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Zenweb Service module",
-  "type": "module",
-  "exports": "./index.js",
-  "engines": {
-    "node": ">=16.0.0"
-  },
-  "typings": "index.d.ts",
+  "exports": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
   "files": [
-    "lib",
-    "index.js",
-    "index.d.ts"
+    "dist"
   ],
   "scripts": {
-    "test": "node test/gen.js"
+    "prepublishOnly": "rm -fr dist && tsc",
+    "dev": "cd example && DEBUG=* NODE_ENV=development ts-node app"
   },
   "author": {
     "name": "YeFei",
@@ -36,12 +31,12 @@
     "url": "https://github.com/yefei/zenweb-service/issues"
   },
   "devDependencies": {
-    "@zenweb/core": "^2.0.1",
-    "eslint": "^7.16.0",
-    "koa": "^2.13.1"
+    "@types/debug": "^4.1.7",
+    "@types/koa": "^2.13.4",
+    "@zenweb/core": "^2.1.2"
   },
   "dependencies": {
     "debug": "^4.3.1",
-    "globby": "^12.0.2"
+    "globby": "11.0.4"
   }
 }

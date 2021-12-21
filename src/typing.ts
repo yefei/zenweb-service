@@ -1,16 +1,16 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { globby } from 'globby';
-import debug from './debug.js';
-import { camelize } from './utils.js';
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import * as globby from 'globby';
+import debug from './debug';
+import { camelize } from './utils';
 
 /**
  * 生成 ts 文件，用于代码补全
- * @param {string[]} paths service 文件扫描路径
- * @param {string} tsFile ts 文件保存路径
- * @param {string} [patterns]
+ * @param paths service 文件扫描路径
+ * @param tsFile ts 文件保存路径
+ * @param patterns 匹配规则
  */
-export async function findServicesToTyping(paths, tsFile, patterns) {
+export async function findServicesToTyping(paths: string[], tsFile: string, patterns?: string) {
   const typingsPath = path.dirname(tsFile);
   const headerCode = [
     '// zenweb service typing',
@@ -21,16 +21,15 @@ export async function findServicesToTyping(paths, tsFile, patterns) {
     '',
   ];
   const declareCode = [];
-
   for (const directory of paths) {
     headerCode.push(`// directory: ${directory}`);
-    for (const fullpath of await globby(patterns || '**/*.js', { cwd: directory, absolute: true })) {
-      const cls = await import('file://' + fullpath);
+    for (const fullpath of await globby(patterns || '**/*.{ts,js}', { cwd: directory, absolute: true })) {
+      const cls = require(fullpath.slice(0, -3));
       if (cls.default) {
         const filename = fullpath.slice(directory.length + 1);
         const propertyName = camelize(filename);
         const className = propertyName[0].toUpperCase() + propertyName.slice(1);
-        let importFilename = path.relative(typingsPath, fullpath).replace(/\\/g, '/');
+        let importFilename = path.relative(typingsPath, fullpath.slice(0, -3)).replace(/\\/g, '/');
         if (!importFilename.startsWith('.')) {
           importFilename = `./${importFilename}`;
         }

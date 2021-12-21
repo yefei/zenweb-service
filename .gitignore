@@ -12,3 +12,4 @@ run/
 *.un~
 .npmrc
 example/service.d.ts
+dist/

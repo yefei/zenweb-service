@@ -1,6 +1,6 @@
-import path from 'node:path';
+import * as path from 'path';
 import { Core } from '@zenweb/core';
-import { setup } from '../index.js';
+import { setup } from '../src/index';
 
 const app = new Core();
 
@@ -10,7 +10,7 @@ app.setup(setup, {
 });
 
 app.use(ctx => {
-  ctx.body = ctx.service.user_account.test();
+  // ctx.body = ctx.service.user_account.test();
 });
 
 app.setupAfter(() => {

@@ -1,4 +1,4 @@
-import { Service } from '@zenweb/service';
+import { Service } from '../../src/index';
 
 export default class TestService extends Service {
 }

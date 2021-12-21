@@ -1,30 +1,26 @@
-/**
- * @typedef {import('koa').Context} Context
- * @typedef {import('@zenweb/core').Core} Core
- */
-import debug from './debug.js';
+import * as Koa from 'koa';
+import debug from './debug';
 
 export class Service {
-  /**
-   * @param {Context} ctx 
-   */
-  constructor(ctx) {
+  readonly ctx: Koa.Context;
+
+  constructor(ctx: Koa.Context) {
     this.ctx = ctx;
   }
 }
 
+export type ServiceClass = { new<T extends Service>(ctx: Koa.Context): T };
+export type ServiceMap = { [name: string | symbol]: ServiceClass };
+
 export class ServiceRegister {
-  constructor() {
-    // this.registeredServices = {};
-    this.registeredServices = new Map();
-  }
+  registeredServices: ServiceMap = {};
 
   /**
    * 注册 service
-   * @param {<T extends Service>() => { new(ctx: Context): T }} cls service class
-   * @param {string} [name] 自定义实例名称，如果不指定则自动使用 class name 首字母小写
+   * @param cls service class
+   * @param name 自定义实例名称，如果不指定则自动使用 class name 首字母小写
    */
-  register(cls, name) {
+  register(cls: ServiceClass, name?: string) {
     if (!name) {
       name = cls.name.charAt(0).toLowerCase() + cls.name.slice(1);
     }
@@ -44,31 +40,31 @@ export class ServiceRegister {
       return pre[cur];
     }, this.registeredServices);
     */
-    if (this.registeredServices.has(name)) {
+    if (name in this.registeredServices) {
       throw new Error(`Duplicate service name: ${name}`);
     }
-    this.registeredServices.set(name, cls);
+    this.registeredServices[name] = cls;
   }
 
   /**
    * 取得 services 对象，这里并不会取得所有 service, 而是在单独取得时候才会被初始化
-   * @param {Context} ctx
    */
-  getContextServices(ctx) {
-    return new Proxy({}, {
+  getContextServices(ctx: Koa.Context) {
+    const inited: { [name: string | symbol]: any } = {};
+    return new Proxy(inited, {
       get: (target, property) => {
         if (!(property in target)) {
-          if (!this.registeredServices.has(property)) {
-            throw new Error(`Service: '${property}' not exist`);
+          if (!(property in this.registeredServices)) {
+            throw new Error(`Service: '${String(property)}' not exist`);
           }
           debug('init: %s', property);
-          const cls = this.registeredServices.get(property);
+          const cls = this.registeredServices[property];
           target[property] = new cls(ctx);
         }
         return target[property];
       },
       has: (target, property) => {
-        return this.registeredServices.has(property);
+        return property in this.registeredServices;
       },
     });
   }

@@ -7,7 +7,7 @@ const typingEnv = process.env.ZENWEB_SERVICE_TYPING_FILE;
 const patternsEnv = process.env.ZENWEB_SERVICE_PATTERNS;
 
 const paths = pathEnv ? pathEnv.split(':') : [path.join(process.cwd(), 'app', 'service')];
-const typingFile = typingEnv || path.resolve(process.cwd(), 'typings', 'service.d.ts');
+const typingFile = typingEnv || path.resolve(process.cwd(), 'typings', 'service.ts');
 
 findServicesToTyping(paths, typingFile, patternsEnv).then(() => {
   console.log('make service typing success');

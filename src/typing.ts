@@ -1,7 +1,6 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as globby from 'globby';
-import debug from './debug';
 import { camelize } from './utils';
 
 /**
@@ -45,7 +44,7 @@ export async function findServicesToTyping(paths: string[], tsFile: string, patt
   code.push(`}`);
   code.push('');
 
-  debug(`write types file: ${tsFile}`);
+  console.log(`write types file: ${tsFile}`);
 
   await fs.mkdir(typingsPath, { recursive: true });
   await fs.writeFile(tsFile, code.join('\n'));

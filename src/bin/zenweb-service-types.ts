@@ -2,12 +2,16 @@
 import * as path from 'path';
 import { findServicesToTyping } from "../typing";
 
-const pathEnv = process.env.ZENWEB_SERVICE_PATHS;
-const typingEnv = process.env.ZENWEB_SERVICE_TYPING_FILE;
-const patternsEnv = process.env.ZENWEB_SERVICE_PATTERNS;
+export function cwdPath(p: string): string {
+  if (p.startsWith('./')) {
+    return path.join(process.cwd(), p.slice(2));
+  }
+  return p;
+}
 
-const paths = pathEnv ? pathEnv.split(':') : [path.join(process.cwd(), 'src', 'service')];
-const typingFile = typingEnv || path.join(process.cwd(), 'src', '_typings', 'service.ts');
+const paths = cwdPath(process.env.ZENWEB_SERVICE_PATH || './src/service');
+const typingFile = cwdPath(process.env.ZENWEB_SERVICE_TYPING_FILE || './src/_typings/service.ts');
+const patternsEnv = process.env.ZENWEB_SERVICE_PATTERNS;
 
 findServicesToTyping(paths, typingFile, patternsEnv).then(() => {
   console.log('make service typing success');
@@ -15,4 +19,4 @@ findServicesToTyping(paths, typingFile, patternsEnv).then(() => {
 }, (e: any) => {
   console.error('make service typing error:', e);
   process.exit(1);
-})
+});

@@ -30,12 +30,16 @@ export function camelize(filepath: string) {
 export async function findServices(register: ServiceRegister, directory: string, patterns?: string) {
   let count = 0;
   for (const file of await globby(patterns || '**/*.{ts,js}', { cwd: directory, absolute: true })) {
-    const cls = require(file.slice(0, -3));
-    if (cls.default) {
+    let cls = require(file.slice(0, -3));
+    // typescript module
+    if (typeof cls === 'object' && cls.default) {
+      cls = cls.default;
+    }
+    if (typeof cls === 'function') {
       const filename = file.slice(directory.length + 1);
       const name = camelize(filename);
       debug('register: %s => %s', file, name);
-      register.register(cls.default, name);
+      register.register(cls, name);
       count++;
     } else {
       debug('ignore: %s', file)
